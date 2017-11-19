@@ -88,7 +88,7 @@ hanoi_towers:
     addi $s0, $s0, 1		#number of moves + 1
     sw	 $s0, MoveCount
     
-    #get top of A and push it to C
+    #get top of Start and push it to End
     lw	 $t0 0($s1)		#load sizeStart    
     sll  $t1 $t0 2		#sizeStart * 4, index of start array
     add  $s4 $t1 $s1 		#index + address of Start
@@ -99,16 +99,23 @@ hanoi_towers:
     sw	 $t0 0($s2)		#store new size to End array
     sll  $t0 $t0 2		#sizeEnd * 4, index of end array
     add  $s5 $t0 $s2		#index + address of End
-    j PopPush
+    
+    				#PopPush
+    lw $t0,   0($s4)		#load value of Pop Start array
+    sw $zero, 0($s4)		#Start array removes poped index
+    sw $t0,   0($s5)		#push poped value on end array
     
     jr $ra			# return
     
 else:
     #expand stack, keeping the 5 values [num of disks, start, aux, end, and address]
-    	addi $sp, $sp, -20
-    
+    	#addi $sp, $sp, -20
+    	addi $sp, $sp, -32
     #save to stack
-    	sw $ra, 16($sp)
+    	sw $s3, 28($sp)		#store address of aux array
+    	sw $s2, 24($sp)		#store address of end array
+    	sw $s1, 20($sp)		#store address of start array
+    	sw $ra, 16($sp)		#store return address, for return to recursive call
     	sw $a3, 12($sp)		#store a3(aux_peg)
     	sw $a2, 8($sp)		#store a2(end_peg)
     	sw $a1, 4($sp)		#store a1(start_peg)
@@ -120,11 +127,17 @@ else:
     		addi $a3, $a2, 0		#aux_peg = end_peg
     		addi $a2, $t3, 0		#end_peg = aux_peg
     		addi $a0, $a0, -1		#num of disk--  
+    		add  $t3, $s3, $zero		#copy aux array to temp
+    		add  $s3, $s2, $zero		#
+    		add  $s2, $t3, 0 		#
     		 		
     	#recursive call
     		jal hanoi_towers   
     	
     #load off stack
+    	lw $s3, 28($sp)		#load aux array
+    	lw $s2, 24($sp)		#load end array
+    	lw $s1, 20($sp)		#load start array
     	lw $ra, 16($sp)
     	lw $a3, 12($sp)		#load a3(extra_peg)
     	lw $a2, 8($sp)		#load a2(end_peg)
@@ -149,27 +162,42 @@ else:
     	addi $a0, $t0, 0		# restore $a0
     	addi $s0, $s0, 1		#number of moves
     	sw   $s0, MoveCount
+    	
+    	#get top of Start and push it to End
+    	lw   $t0 0($s1)		#load sizeStart    
+    	sll  $t1 $t0 2		#sizeStart * 4, index of start array
+    	add  $s4 $t1 $s1 		#index + address of Start
+   	subi $t0 $t0 1		#sizeStart - 1
+    	sw   $t0 0($s1)		#store new size to start array
+    	lw   $t0 0($s2)		#load sizeEnd
+    	addi $t0 $t0 1		#sizeEnd + 1
+    	sw   $t0 0($s2)		#store new size to End array
+    	sll  $t0 $t0 2		#sizeEnd * 4, index of end array
+    	add  $s5 $t0 $s2		#index + address of End
+    					
+    					#PopPush
+    	lw $t0,   0($s4)		#load value of Pop Start array
+  	sw $zero, 0($s4)		#Start array removes poped index
+  	sw $t0,   0($s5)		#push poped value on end array
+    	
     
-    #hanoi_towers(num_of_disks-1, extra_peg, end_peg, start_peg)  
+    #hanoi_towers(num_of_disks-1, aux_peg, end_peg, start_peg)  
     	#set args for subsequent recursive call
     		addi $t3, $a3, 0		#copy var into temp
     		addi $a3, $a1, 0		#extra_peg = start_peg
     		addi $a1, $t3, 0		#start_peg = extra_peg
-    		addi $a0, $a0, -1		#num of disk--  		
+    		addi $a0, $a0, -1		#num of disk-- 
+    		add  $t3, $s3, $zero		#copy aux array to temp
+    		add  $s3, $s1, 0		#aux = start
+    		add  $s1, $t3, 0 		#start = aux		
     	#recursive call
     		jal hanoi_towers  
     	#load params off stack
     		lw $ra, 16($sp)
     		
     #clear stack
-    	addi $sp, $sp, 20
+    	addi $sp, $sp, 32
 
     #return
     	add $v0, $zero, $t5
     	jr $ra
-    	
-  PopPush:
-  	lw $t0,   0($s4)		#load value of Pop Start array
-  	sw $zero, 0($s4)		#Start array removes poped index
-  	sw $t0,   0($s5)		#push poped value on end array
-  	jr $ra 				#return
