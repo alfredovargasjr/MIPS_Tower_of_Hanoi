@@ -14,13 +14,13 @@ MoveCount:
     .word 0
     
 Apeg:					#example
-   .word 0, 9, 9, 9, 9, 9, 9		#A[3,2,0]
+   .word 0, 9, 9, 9, 9, 9, 9		#A[size,3,2,0]
 
 Bpeg:
-   .word 0, 9, 9, 9, 9, 9, 9		#B[0,0,0]
+   .word 0, 9, 9, 9, 9, 9, 9		#B[size,0,0,0]
 
 Cpeg:
-   .word 0, 9, 9, 9, 9, 9, 9		#C[1,0,0]
+   .word 0, 9, 9, 9, 9, 9, 9		#C[size,1,0,0]
      
    .text     
 main:
@@ -38,18 +38,18 @@ main:
     addi $a3, $zero, 2		#$a3 = auxilary peg
    
     addi $s0, $zero, 0		#Number of moves
-    add  $s1, $zero, $a0 	#disks in start peg
-    addi $s2, $zero, 0		#disks in end peg
-    addi $s3, $zero, 0		#disks in aux peg
+    la	 $s1, Apeg		#load address of A[]
+    la	 $s2, Cpeg		#load address of C[]
+    la	 $s3, Bpeg		#load address of B[]
     
-    addi $t0, $zero, $a0	#start at number of disk, heighest weight
+    add $t0, $zero, $a0		#start at number of disk, heighest weight
     la	 $t1, Apeg + 4
     fillInStartPeg:
     sw	 $t0, 0($t1)
     addi $t1, $t1, 4		#move to next index 
     subi $t0, $t0, 1		#weight - 1
     bne  $t0, 0, fillInStartPeg	#exit loop when $t0 = num of disks
-    
+    sw $a0 Apeg			#add size to the first element of the array
    
     jal hanoi_towers		#jump to hanoi_towers function
     
@@ -89,14 +89,16 @@ hanoi_towers:
     sw	 $s0, MoveCount
     
     #get top of A and push it to C
-    subi $t0 $s1 1		#index of top = 4(size - 1), A peg
-    sll  $t0 $t0 2
-    la	 $t1 Apeg
-    add  $s4 $t0 $t1 		#index + address 
-    subi $t0 $s1 1		#index of top = 4(size - 1), C peg
-    sll  $t0 $t0 2
-    la	 $t1 Cpeg
-    add  $s5 $t0 $t1 		#index + address 
+    lw	 $t0 0($s1)		#load sizeStart    
+    sll  $t1 $t0 2		#sizeStart * 4, index of start array
+    add  $s4 $t1 $s1 		#index + address of Start
+    subi $t0 $t0 1		#sizeStart - 1
+    sw	 $t0 0($s1)		#store new size to start array
+    lw	 $t0 0($s2)		#load sizeEnd
+    addi $t0 $t0 1		#sizeEnd + 1
+    sw	 $t0 0($s2)		#store new size to End array
+    sll  $t0 $t0 2		#sizeEnd * 4, index of end array
+    add  $s5 $t0 $s2		#index + address of End
     j PopPush
     
     jr $ra			# return
@@ -167,7 +169,7 @@ else:
     	jr $ra
     	
   PopPush:
-  	lw $t0,   0($s4)		#load value of Pop A[]
-  	sw $zero, 0($s4)
-  	sw $t0,   0($s5)
-  	jr $ra 
+  	lw $t0,   0($s4)		#load value of Pop Start array
+  	sw $zero, 0($s4)		#Start array removes poped index
+  	sw $t0,   0($s5)		#push poped value on end array
+  	jr $ra 				#return
