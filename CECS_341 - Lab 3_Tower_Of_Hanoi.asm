@@ -10,6 +10,10 @@ blockS3: .asciiz "xxx"
 blockS4: .asciiz "xxxx"
 blockS5: .asciiz "xxxxx"
 blockS6: .asciiz "xxxxxx"
+blockS7: .asciiz "xxxxxxx"
+blockS8: .asciiz "xxxxxxxx"
+blockS9: .asciiz "xxxxxxxxx"
+blockS10: .asciiz "xxxxxxxxxx"
 linesep: .asciiz "\n_____________________________________"
 tabs: 	 .asciiz "\t\t"
 Prompt:  
@@ -65,230 +69,13 @@ main:
    
     jal hanoi_towers		#jump to hanoi_towers function
     
-      # printing size of each peg ####################################
-     
-     addi $s7, $a0, 0
-     addi $s6, $v0, 0
-     la $s5, Apeg
-     la $t8, Bpeg
-     la $t9, Cpeg
-     
-     li $v0, 4
-     la $a0, PegAprint
-     syscall
-     li $v0, 4
-     la $a0, PegBprint
-     syscall
-     li $v0, 4
-     la $a0, PegCprint
-     syscall
-      la $a0, space
-     syscall
-     
-     lw $t2, 0($s5)  # t6 = size of peg
-     add $t6, $t2, $t6
-     lw $t2, 0($t8)
-     add $t6, $t2, $t6
-     lw $t2, 0($t9)
-     add $t6, $t2, $t6
-     
-     # check if the peg has blocks
-     PRINT2LOOPf:
-          
-     la $a0, space
-     syscall
-     beq $t6, 0, NEXT2f
-     mul $t5, $t6, 4
-     addi $t6, $t6, -1
-     
-     add $t4, $s5, $t5
-     
-     lw $t3, 0($t4)
-     beq $t3, 0, PEG2PRINT2f
-     beq $t3, 9, PEG2PRINT2f
-     bne $t3, 1, s22f
-     li $v0, 4
-     la $a0, blockS1
-     syscall
-     
-     j PEG2PRINT2f
-     
-     s22f:
-     bne $t3, 2, s32f
-     li $v0, 4
-     la $a0, blockS2
-     syscall
-
-     
-     j PEG2PRINT2f
-     
-     s32f:
-     bne $t3, 3, s42f
-     li $v0, 4
-     la $a0, blockS3
-     syscall
-
-     
-     j PEG2PRINT2f
-     
-     s42f:
-     bne $t3, 4, s52f
-     li $v0, 4
-     la $a0, blockS4
-     syscall
-     
-      j PEG2PRINT2f
-     
-     s52f:
-     bne $t3, 5, s62f
-     li $v0, 4
-     la $a0, blockS5
-     syscall
-     
-      j PEG2PRINT2f
-     
-     s62f:
-     li $v0, 4
-     la $a0, blockS6
-     syscall
-
-     ######## peg 2 print
-     PEG2PRINT2f:
-     add $t4, $t8, $t5
-     
-     li $v0, 4
-     la $a0, tabs
-     syscall
-     
-     lw $t3, 0($t4)
-     beq $t3, 0, PEG3PRINT2f
-     beq $t3, 9, PEG3PRINT2f
-     bne $t3, 1, sp222f
-     li $v0, 4
-     la $a0, blockS1
-     syscall
-     
-     j PEG3PRINT2f
-     
-     sp222f:
-     bne $t3, 2, sp232f
-     li $v0, 4
-     la $a0, blockS2
-     syscall
-     
-     j PEG3PRINT2f
-     
-     sp232f:
-     bne $t3, 3, sp242f
-     li $v0, 4
-     la $a0, blockS3
-     syscall
-
-     
-     j PEG3PRINT2f
-     
-     sp242f:
-     bne $t3, 4, s52f
-     li $v0, 4
-     la $a0, blockS4
-     syscall
-     
-      j PEG3PRINT2f
-     
-     sp252f:
-     bne $t3, 5, s62f
-     li $v0, 4
-     la $a0, blockS5
-     syscall
-     
-      j PEG3PRINT2f
-     
-     sp262f:
-     li $v0, 4
-     la $a0, blockS6
-     syscall
-     
-     PEG3PRINT2f:
-     ######### PEG 3 PRINT
-      add $t4, $t9, $t5
-      
-     li $v0, 4
-     la $a0, tabs
-     syscall
-     
-     
-     lw $t3, 0($t4)
-     beq $t3, 0, PRINT2LOOPf
-     beq $t3, 9, PRINT2LOOPf
-     bne $t3, 1, sp322f
-     li $v0, 4
-     la $a0, blockS1
-     syscall
-     
-     j PRINT2LOOPf
-     
-     sp322f:
-     bne $t3, 2, sp332f
-     li $v0, 4
-     la $a0, blockS2
-     syscall
-     
-     j PRINT2LOOPf
-     
-     sp332f:
-     bne $t3, 3, sp342f
-     li $v0, 4
-     la $a0, blockS3
-     syscall
-     
-     j PRINT2LOOPf
-     
-     sp342f:
-     bne $t3, 4, sp352f
-     li $v0, 4
-     la $a0, blockS4
-     syscall
-     
-     j PRINT2LOOPf
-     
-     sp352f:
-     bne $t3, 5, sp362f
-     li $v0, 4
-     la $a0, blockS5
-     syscall
-     
-     j PRINT2LOOPf
-     
-     sp362f:
-     
-     li $v0, 4
-     la $a0, blockS6
-     syscall
-     
-     j PRINT2LOOPf
-     
-     
-     
+     ####### printing pegs
     	
-    	NEXT2f:
-
-    	li  $v0, 4 			#Print Steps count prompt
-   	la  $a0, StepsCount		#load adress for prompt
-   	syscall
-    	lw $a0, MoveCount   # Load the contents of word stored at MoveCount
-   	addi $v0, $0, 1  # Set service #1 (which prints an integer)
-  	syscall          # Do the system call
-    	
-    	li $v0, 4
-    	la $a0, linesep
-    	syscall
-    	li $v0, 4
-    	la $a0, space
-    	syscall
-    	
-    	  addi $a0, $s7, 0
-    	 addi $v0, $a0, 0
-    	##########################################################
+    	addi $sp, $sp, -4
+    	sw $ra, 0($sp)
+    	jal print_pegs
+    	lw $ra, 0($sp)
+    	addi $sp, $sp, 4
 
     
     
@@ -315,227 +102,13 @@ hanoi_towers:
 
     
     
-      # printing size of each peg ####################################
-     
-     addi $s7, $a0, 0
-     addi $s6, $v0, 0
-     la $s5, Apeg
-     la $t8, Bpeg
-     la $t9, Cpeg
-     
-     li $v0, 4
-     la $a0, PegAprint
-     syscall
-     li $v0, 4
-     la $a0, PegBprint
-     syscall
-     li $v0, 4
-     la $a0, PegCprint
-     syscall
-      la $a0, space
-     syscall
-     
-     lw $t2, 0($s5)  # t6 = size of peg
-     add $t6, $t2, $t6
-     lw $t2, 0($t8)
-     add $t6, $t2, $t6
-     lw $t2, 0($t9)
-     add $t6, $t2, $t6
-     
-     # check if the peg has blocks
-     PRINTLOOP:
-          
-     la $a0, space
-     syscall
-     beq $t6, 0, NEXT
-     mul $t5, $t6, 4
-     addi $t6, $t6, -1
-     
-     add $t4, $s5, $t5
-     
-     lw $t3, 0($t4)
-     beq $t3, 0, PEG2PRINT
-     beq $t3, 9, PEG2PRINT
-     bne $t3, 1, s2
-     li $v0, 4
-     la $a0, blockS1
-     syscall
-     
-     j PEG2PRINT
-     
-     s2:
-     bne $t3, 2, s3
-     li $v0, 4
-     la $a0, blockS2
-     syscall
-
-     
-     j PEG2PRINT
-     
-     s3:
-     bne $t3, 3, s4
-     li $v0, 4
-     la $a0, blockS3
-     syscall
-
-     
-     j PEG2PRINT
-     
-     s4:
-     bne $t3, 4, s5
-     li $v0, 4
-     la $a0, blockS4
-     syscall
-     
-     j PEG2PRINT
-     
-     s5:
-     bne $t3, 5, s6
-     li $v0, 4
-     la $a0, blockS5
-     syscall
-     
-     j PEG2PRINT
-     
-     s6:
-     li $v0, 4
-     la $a0, blockS6
-     syscall
-
-     ######## peg 2 print
-     PEG2PRINT:
-     add $t4, $t8, $t5
-     
-     li $v0, 4
-     la $a0, tabs
-     syscall
-     
-     lw $t3, 0($t4)
-     beq $t3, 0, PEG3PRINT
-     beq $t3, 9, PEG3PRINT
-     bne $t3, 1, sp22
-     li $v0, 4
-     la $a0, blockS1
-     syscall
-     
-     j PEG3PRINT
-     
-     sp22:
-     bne $t3, 2, sp23
-     li $v0, 4
-     la $a0, blockS2
-     syscall
-     
-     j PEG3PRINT
-     
-     sp23:
-     bne $t3, 3, sp24
-     li $v0, 4
-     la $a0, blockS3
-     syscall
-
-     
-     j PEG3PRINT
-     
-     sp24:
-     bne $t3, 4, sp25
-     li $v0, 4
-     la $a0, blockS4
-     syscall
-     
-      j PEG3PRINT
-     
-     sp25:
-     bne $t3, 5, sp26
-     li $v0, 4
-     la $a0, blockS5
-     syscall
-     
-      j PEG3PRINT
-     
-     sp26:
-     li $v0, 4
-     la $a0, blockS6
-     syscall
-     
-     PEG3PRINT:
-     ######### PEG 3 PRINT
-      add $t4, $t9, $t5
-      
-     li $v0, 4
-     la $a0, tabs
-     syscall
-     
-     
-     lw $t3, 0($t4)
-     beq $t3, 0, PRINTLOOP
-     beq $t3, 9, PRINTLOOP
-     bne $t3, 1, sp32
-     li $v0, 4
-     la $a0, blockS1
-     syscall
-     
-     j PRINTLOOP
-     
-     sp32:
-     bne $t3, 2, sp33
-     li $v0, 4
-     la $a0, blockS2
-     syscall
-     
-     j PRINTLOOP
-     
-     sp33:
-     bne $t3, 3, sp34
-     li $v0, 4
-     la $a0, blockS3
-     syscall
-     
-     j PRINTLOOP
-     
-     sp34:
-     bne $t3, 4, sp35
-     li $v0, 4
-     la $a0, blockS4
-     syscall
-     
-     j PRINTLOOP
-     
-     sp35:
-     bne $t3, 5, sp36
-     li $v0, 4
-     la $a0, blockS5
-     syscall
-     j PRINTLOOP
-     
-     sp36:
-     
-     li $v0, 4
-     la $a0, blockS6
-     syscall
-     
-     j PRINTLOOP
-     
+	####### printing pegs
     	
-    	NEXT:
-    	li  $v0, 4 			#Print Steps count prompt
-   	la  $a0, StepsCount		#load adress for prompt
-   	syscall
-    	lw $a0, MoveCount   # Load the contents of word stored at MoveCount
-   	addi $v0, $0, 1  # Set service #1 (which prints an integer)
-  	syscall          # Do the system call
-    	
-    	li $v0, 4
-    	la $a0, linesep
-    	syscall
-    	li $v0, 4
-    	la $a0, space
-    	syscall
-    	
-    	
-    	  addi $a0, $s7, 0
-    	 addi $v0, $a0, 0
-    	##########################################################
+    	addi $sp, $sp, -4
+    	sw $ra, 0($sp)
+    	jal print_pegs
+    	lw $ra, 0($sp)
+    	addi $sp, $sp, 4
     
     addi $a0, $t0, 0		# restore $a0
     
@@ -586,7 +159,7 @@ else:
     		add  $s2, $t3, 0 		#
     		 		
     	#recursive call
-    		jal hanoi_towers   
+    	jal hanoi_towers   
 
     	
     #load off stack
@@ -602,225 +175,14 @@ else:
     #move a disk from start_peg to end_peg
     	addi $t0, $a0, 0		# temp save $a0
     	addi $t1, $zero, 1
-
-  # printing size of each peg ####################################
-     
-     addi $s7, $a0, 0
-     addi $s6, $v0, 0
-     la $s5, Apeg
-     la $t8, Bpeg
-     la $t9, Cpeg
-     
-     li $v0, 4
-     la $a0, PegAprint
-     syscall
-     li $v0, 4
-     la $a0, PegBprint
-     syscall
-     li $v0, 4
-     la $a0, PegCprint
-     syscall
-      la $a0, space
-     syscall
-     
-     lw $t2, 0($s5)  # t6 = size of peg
-     add $t6, $t2, $t6
-     lw $t2, 0($t8)
-     add $t6, $t2, $t6
-     lw $t2, 0($t9)
-     add $t6, $t2, $t6
-     
-     # check if the peg has blocks
-     PRINT2LOOP:
-          
-     la $a0, space
-     syscall
-     beq $t6, 0, NEXT2
-     mul $t5, $t6, 4
-     addi $t6, $t6, -1
-     
-     add $t4, $s5, $t5
-     
-     lw $t3, 0($t4)
-     beq $t3, 0, PEG2PRINT2
-     beq $t3, 9, PEG2PRINT2
-     bne $t3, 1, s22
-     li $v0, 4
-     la $a0, blockS1
-     syscall
-     
-     j PEG2PRINT2
-     
-     s22:
-     bne $t3, 2, s32
-     li $v0, 4
-     la $a0, blockS2
-     syscall
-
-     
-     j PEG2PRINT2
-     
-     s32:
-     bne $t3, 3, s42
-     li $v0, 4
-     la $a0, blockS3
-     syscall
-
-     
-     j PEG2PRINT2
-     
-     s42:
-     bne $t3, 4, s52
-     li $v0, 4
-     la $a0, blockS4
-     syscall
-     
-     j PEG2PRINT2
-     s52:
-     bne $t3, 5, s62
-     li $v0, 4
-     la $a0, blockS5
-     syscall
-     
-     j PEG2PRINT2
-     s62:
-     li $v0, 4
-     la $a0, blockS6
-     syscall
-
-     ######## peg 2 print
-     PEG2PRINT2:
-     add $t4, $t8, $t5
-     
-     li $v0, 4
-     la $a0, tabs
-     syscall
-     
-     lw $t3, 0($t4)
-     beq $t3, 0, PEG3PRINT2
-     beq $t3, 9, PEG3PRINT2
-     bne $t3, 1, sp222
-     li $v0, 4
-     la $a0, blockS1
-     syscall
-     
-     j PEG3PRINT2
-     
-     sp222:
-     bne $t3, 2, sp232
-     li $v0, 4
-     la $a0, blockS2
-     syscall
-     
-     j PEG3PRINT2
-     
-     sp232:
-     bne $t3, 3, sp242
-     li $v0, 4
-     la $a0, blockS3
-     syscall
-
-     j PEG3PRINT2
-     
-     sp242:
-     bne $t3, 4, sp252
-     li $v0, 4
-     la $a0, blockS4
-     syscall
-     j PEG3PRINT2
-     
-     sp252:
-     bne $t3, 5, sp262
-     li $v0, 4
-     la $a0, blockS5
-     syscall
-     
-     j PEG3PRINT2
-     
-     sp262:
-     li $v0, 4
-     la $a0, blockS6
-     syscall
-     
-     PEG3PRINT2:
-     ######### PEG 3 PRINT
-      add $t4, $t9, $t5
-      
-     li $v0, 4
-     la $a0, tabs
-     syscall
-     
-     
-     lw $t3, 0($t4)
-     beq $t3, 0, PRINT2LOOP
-     beq $t3, 9, PRINT2LOOP
-     bne $t3, 1, sp322
-     li $v0, 4
-     la $a0, blockS1
-     syscall
-     
-     j PRINT2LOOP
-     
-     sp322:
-     bne $t3, 2, sp332
-     li $v0, 4
-     la $a0, blockS2
-     syscall
-     
-     j PRINT2LOOP
-     
-     sp332:
-     bne $t3, 3, sp342
-     li $v0, 4
-     la $a0, blockS3
-     syscall
-     
-     j PRINT2LOOP
-     
-     sp342:
-     bne $t3, 4, sp352
-     li $v0, 4
-     la $a0, blockS4
-     syscall
-     
-     j PRINT2LOOP
-     
-     sp352:
-     bne $t3, 5, sp362
-     li $v0, 4
-     la $a0, blockS5
-     syscall
-     
-     
-     j PRINT2LOOP
-     
-     sp362:
-     li $v0, 4
-     la $a0, blockS6
-     syscall
-     
-     j PRINT2LOOP
-     
     	
-    	NEXT2:
-  
-    	li  $v0, 4 			#Print Steps count prompt
-   	la  $a0, StepsCount		#load adress for prompt
-   	syscall
-    	lw $a0, MoveCount   # Load the contents of word stored at MoveCount
-   	addi $v0, $0, 1  # Set service #1 (which prints an integer)
-  	syscall          # Do the system call
+    	####### printing pegs
     	
-    	li $v0, 4
-    	la $a0, linesep
-    	syscall
-    	li $v0, 4
-    	la $a0, space
-    	syscall
-    	
-    	  addi $a0, $s7, 0
-    	 addi $v0, $a0, 0
-    	##########################################################
+    	addi $sp, $sp, -4
+    	sw $ra, 0($sp)
+    	jal print_pegs
+    	lw $ra, 0($sp)
+    	addi $sp, $sp, 4
     	
     	
     	addi $a0, $t0, 0		# restore $a0
@@ -859,7 +221,7 @@ else:
     		add  $s1, $t3, 0 		#start = aux		
     	#recursive call
     	
-    		jal hanoi_towers  
+    	jal hanoi_towers  
     		
     	#load params off stack
     	
@@ -873,3 +235,324 @@ else:
     	 
 
     	jr $ra
+
+
+print_pegs:
+      # printing size of each peg ####################################
+     
+     addi $s7, $a0, 0
+     addi $s6, $v0, 0
+     la $s5, Apeg
+     la $t8, Bpeg
+     la $t9, Cpeg
+     
+     li $v0, 4
+     la $a0, PegAprint
+     syscall
+     li $v0, 4
+     la $a0, PegBprint
+     syscall
+     li $v0, 4
+     la $a0, PegCprint
+     syscall
+      la $a0, space
+     syscall
+     
+     lw $t2, 0($s5)  # t6 = size of peg
+     add $t6, $t2, $t6
+     lw $t2, 0($t8)
+     add $t6, $t2, $t6
+     lw $t2, 0($t9)
+     add $t6, $t2, $t6
+     
+     # check if the peg has blocks
+     PRINTLOOP:
+          
+     la $a0, space
+     syscall
+     beq $t6, 0, NEXT
+     mul $t5, $t6, 4
+     addi $t6, $t6, -1
+     
+     add $t4, $s5, $t5
+     
+     lw $t3, 0($t4)
+     beq $t3, 0, PEG2PRINT
+     #beq $t3, 11, PEG2PRINT
+     bne $t3, 1, s2
+     li $v0, 4
+     la $a0, blockS1
+     syscall
+     
+     j PEG2PRINT
+     
+     s2:
+     bne $t3, 2, s3
+     li $v0, 4
+     la $a0, blockS2
+     syscall
+
+     
+     j PEG2PRINT
+     
+     s3:
+     bne $t3, 3, s4
+     li $v0, 4
+     la $a0, blockS3
+     syscall
+
+     
+     j PEG2PRINT
+     
+     s4:
+     bne $t3, 4, s5
+     li $v0, 4
+     la $a0, blockS4
+     syscall
+     
+     j PEG2PRINT
+     
+     s5:
+     bne $t3, 5, s6
+     li $v0, 4
+     la $a0, blockS5
+     syscall
+     
+     j PEG2PRINT
+     
+     s6:
+     bne $t3, 6, s7
+     li $v0, 4
+     la $a0, blockS6
+     syscall
+     
+     j PEG2PRINT
+     
+     s7:
+     bne $t3, 7, s8
+     li $v0, 4
+     la $a0, blockS7
+     syscall
+     
+     j PEG2PRINT
+     
+     s8:
+     bne $t3, 8, s9
+     li $v0, 4
+     la $a0, blockS8
+     syscall
+     
+     j PEG2PRINT
+     
+     s9:
+     bne $t3, 9, s10
+     li $v0, 4
+     la $a0, blockS9
+     syscall
+     
+     j PEG2PRINT
+     
+     s10:
+     li $v0, 4
+     la $a0, blockS10
+     syscall
+
+     ######## peg 2 print
+     PEG2PRINT:
+     add $t4, $t8, $t5
+     
+     li $v0, 4
+     la $a0, tabs
+     syscall
+     
+     lw $t3, 0($t4)
+     beq $t3, 0, PEG3PRINT
+     #beq $t3, 11, PEG3PRINT
+     bne $t3, 1, sp22
+     li $v0, 4
+     la $a0, blockS1
+     syscall
+     
+     j PEG3PRINT
+     
+     sp22:
+     bne $t3, 2, sp23
+     li $v0, 4
+     la $a0, blockS2
+     syscall
+     
+     j PEG3PRINT
+     
+     sp23:
+     bne $t3, 3, sp24
+     li $v0, 4
+     la $a0, blockS3
+     syscall
+
+     
+     j PEG3PRINT
+     
+     sp24:
+     bne $t3, 4, sp25
+     li $v0, 4
+     la $a0, blockS4
+     syscall
+     
+      j PEG3PRINT
+     
+     sp25:
+     bne $t3, 5, sp26
+     li $v0, 4
+     la $a0, blockS5
+     syscall
+     
+      j PEG3PRINT
+     
+     sp26:
+     bne $t3, 6, sp27
+     li $v0, 4
+     la $a0, blockS6
+     syscall
+     
+     j PEG3PRINT
+     
+     sp27:
+     bne $t3, 7, sp28
+     li $v0, 4
+     la $a0, blockS7
+     syscall
+     
+     j PEG3PRINT
+     
+     sp28:
+     bne $t3, 8, sp29
+     li $v0, 4
+     la $a0, blockS8
+     syscall
+     
+     j PEG3PRINT
+     
+     sp29:
+     bne $t3, 9, sp210
+     li $v0, 4
+     la $a0, blockS9
+     syscall
+     
+     j PEG3PRINT
+     
+     sp210:
+     li $v0, 4
+     la $a0, blockS10
+     syscall
+     
+     PEG3PRINT:
+     ######### PEG 3 PRINT
+      add $t4, $t9, $t5
+      
+     li $v0, 4
+     la $a0, tabs
+     syscall
+     
+     
+     lw $t3, 0($t4)
+     beq $t3, 0, PRINTLOOP
+     #beq $t3, 11, PRINTLOOP
+     bne $t3, 1, sp32
+     li $v0, 4
+     la $a0, blockS1
+     syscall
+     
+     j PRINTLOOP
+     
+     sp32:
+     bne $t3, 2, sp33
+     li $v0, 4
+     la $a0, blockS2
+     syscall
+     
+     j PRINTLOOP
+     
+     sp33:
+     bne $t3, 3, sp34
+     li $v0, 4
+     la $a0, blockS3
+     syscall
+     
+     j PRINTLOOP
+     
+     sp34:
+     bne $t3, 4, sp35
+     li $v0, 4
+     la $a0, blockS4
+     syscall
+     
+     j PRINTLOOP
+     
+     sp35:
+     bne $t3, 5, sp36
+     li $v0, 4
+     la $a0, blockS5
+     syscall
+     j PRINTLOOP
+     
+     sp36:
+     bne $t3, 6, sp37
+     li $v0, 4
+     la $a0, blockS6
+     syscall
+     
+     j PRINTLOOP
+     
+     sp37:
+     bne $t3, 7, sp38
+     li $v0, 4
+     la $a0, blockS7
+     syscall
+     
+     j PRINTLOOP
+     
+     sp38:
+     bne $t3, 8, sp39
+     li $v0, 4
+     la $a0, blockS8
+     syscall
+     
+     j PRINTLOOP
+     
+     sp39:
+     bne $t3, 9, sp310
+     li $v0, 4
+     la $a0, blockS9
+     syscall
+     
+     j PRINTLOOP
+     
+     sp310:
+     li $v0, 4
+     la $a0, blockS10
+     syscall
+     
+     j PRINTLOOP
+     
+    	
+    	NEXT:
+    	li  $v0, 4 			#Print Steps count prompt
+   	la  $a0, StepsCount		#load adress for prompt
+   	syscall
+    	lw $a0, MoveCount   # Load the contents of word stored at MoveCount
+   	addi $v0, $0, 1  # Set service #1 (which prints an integer)
+  	syscall          # Do the system call
+    	
+    	li $v0, 4
+    	la $a0, linesep
+    	syscall
+    	li $v0, 4
+    	la $a0, space
+    	syscall
+    	
+    	
+	addi $a0, $s7, 0
+	addi $v0, $a0, 0
+    	 
+	jr $ra
+    	##########################################################
