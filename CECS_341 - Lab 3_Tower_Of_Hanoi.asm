@@ -19,11 +19,7 @@ tabs: 	 .asciiz "\t\t"
 Prompt:  
     .asciiz     "\n W E L C O M E  T O   T H E  T O W E R OF H A N O I   G A M E  \n\n Please enter the number of disks: "
 
-StepsCount: .asciiz  "\nCurrent number of steps : "
-
-To:
-    .ascii      " to "
-    .globl main  
+StepsCount: .asciiz  "\nCurrent number of steps : "  
     
 MoveCount:
     .word 0
@@ -47,10 +43,6 @@ main:
     li $v0, 5			#read user input, integer
     syscall			#syscall for input
     add $a0, $v0, $zero 	#$a0 = num of disks
-    
-    addi $a1, $zero, 1		#$a1 = start peg
-    addi $a2, $zero, 3		#$a2 = end peg
-    addi $a3, $zero, 2		#$a3 = auxilary peg
    
     addi $s0, $zero, 0		#Number of moves
     la	 $s1, Apeg		#load address of A[]
@@ -65,20 +57,17 @@ main:
     subi $t0, $t0, 1		#weight - 1
     bne  $t0, 0, fillInStartPeg	#exit loop when $t0 = num of disks
     sw $a0 Apeg			#add size to the first element of the array
-    
    
     jal hanoi_towers		#jump to hanoi_towers function
-    
-     ####### printing pegs
+   
+        ####### printing pegs
     	
     	addi $sp, $sp, -4
     	sw $ra, 0($sp)
     	jal print_pegs
     	lw $ra, 0($sp)
     	addi $sp, $sp, 4
-
-    
-    
+    	
     li $v0, 10 			# Return control to OS
     syscall
     
@@ -96,21 +85,16 @@ hanoi_towers:
     
     # -base case-
     # if (num_of_disks == 1)
-    addi $t0, $a0, 0		# temp save $a0, num of disks
     addi $t1, $zero, 1		# $t1 = 1
     bne $a0, $t1, else		# branch if( num of disk != 1)
-
     
-    
-	####### printing pegs
+         ####### printing pegs
     	
     	addi $sp, $sp, -4
     	sw $ra, 0($sp)
     	jal print_pegs
     	lw $ra, 0($sp)
     	addi $sp, $sp, 4
-    
-    addi $a0, $t0, 0		# restore $a0
     
     addi $s0, $s0, 1		#number of moves + 1
     sw	 $s0, MoveCount
@@ -137,53 +121,43 @@ hanoi_towers:
 else:
     #expand stack, keeping the 5 values [num of disks, start, aux, end, and address]
     	#addi $sp, $sp, -20
-    	addi $sp, $sp, -32
+    	addi $sp, $sp, -20
     #save to stack
-    	sw $s3, 28($sp)		#store address of aux array
-    	sw $s2, 24($sp)		#store address of end array
-    	sw $s1, 20($sp)		#store address of start array
     	sw $ra, 16($sp)		#store return address, for return to recursive call
-    	sw $a3, 12($sp)		#store a3(aux_peg)
-    	sw $a2, 8($sp)		#store a2(end_peg)
-    	sw $a1, 4($sp)		#store a1(start_peg)
+    	sw $s3, 12($sp)		#store address of aux array
+    	sw $s2, 8($sp)		##store address of end array
+    	sw $s1, 4($sp)		#store address of start array
 	sw $a0, 0($sp)		#store a0(num_of_disks)
 	    
     #hanoi_towers(num_of_disks-1, start_peg, aux_peg, end_peg)    
     	#set args for subsequent recursive call
-    		addi $t3, $a3, 0		#copy var into temp
-    		addi $a3, $a2, 0		#aux_peg = end_peg
-    		addi $a2, $t3, 0		#end_peg = aux_peg
     		addi $a0, $a0, -1		#num of disk--  
     		add  $t3, $s3, $zero		#copy aux array to temp
-    		add  $s3, $s2, $zero		#
-    		add  $s2, $t3, 0 		#
+    		add  $s3, $s2, $zero		#copy address of end to aux 
+    		add  $s2, $t3, 0 		#copy address of temp to aux
     		 		
     	#recursive call
     	jal hanoi_towers   
 
     	
     #load off stack
-    	lw $s3, 28($sp)		#load aux array
-    	lw $s2, 24($sp)		#load end array
-    	lw $s1, 20($sp)		#load start array
     	lw $ra, 16($sp)
-    	lw $a3, 12($sp)		#load a3(extra_peg)
-    	lw $a2, 8($sp)		#load a2(end_peg)
-    	lw $a1, 4($sp)		#load a1(start_peg)
+    	lw $s3, 12($sp)		#load aux array
+    	lw $s2, 8($sp)		#load end array
+    	lw $s1, 4($sp)		#load start array
     	lw $a0, 0($sp)		#load a0(num_of_disks)
    
     #move a disk from start_peg to end_peg
     	addi $t0, $a0, 0		# temp save $a0
     	addi $t1, $zero, 1
     	
-    	####### printing pegs
+    	     ####### printing pegs
     	
     	addi $sp, $sp, -4
     	sw $ra, 0($sp)
     	jal print_pegs
     	lw $ra, 0($sp)
     	addi $sp, $sp, 4
-    	
     	
     	addi $a0, $t0, 0		# restore $a0
     	addi $s0, $s0, 1		#number of moves
@@ -212,9 +186,6 @@ else:
     
     #hanoi_towers(num_of_disks-1, aux_peg, end_peg, start_peg)  
     	#set args for subsequent recursive call
-    		addi $t3, $a3, 0		#copy var into temp
-    		addi $a3, $a1, 0		#extra_peg = start_peg
-    		addi $a1, $t3, 0		#start_peg = extra_peg
     		addi $a0, $a0, -1		#num of disk-- 
     		add  $t3, $s3, $zero		#copy aux array to temp
     		add  $s3, $s1, 0		#aux = start
@@ -228,7 +199,7 @@ else:
     		lw $ra, 16($sp)
     		
     #clear stack
-    	addi $sp, $sp, 32
+    	addi $sp, $sp, 20
 
     #return
     	add $v0, $zero, $t5
