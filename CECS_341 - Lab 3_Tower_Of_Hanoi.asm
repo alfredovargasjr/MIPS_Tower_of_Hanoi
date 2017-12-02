@@ -1,5 +1,4 @@
-    .data
-    #Help from source: Austin Corso, GitHub asm file
+.data
 space: .asciiz "\n"
 PegAprint: .asciiz "A"
 PegBprint: .asciiz "\t\tB"
@@ -146,10 +145,6 @@ else:
     	lw $s2, 8($sp)		#load end array
     	lw $s1, 4($sp)		#load start array
     	lw $a0, 0($sp)		#load a0(num_of_disks)
-   
-    #move a disk from start_peg to end_peg
-    	addi $t0, $a0, 0		# temp save $a0
-    	addi $t1, $zero, 1
     	
     	     ####### printing pegs
     	
@@ -158,8 +153,8 @@ else:
     	jal print_pegs
     	lw $ra, 0($sp)
     	addi $sp, $sp, 4
-    	
-    	addi $a0, $t0, 0		# restore $a0
+    
+     #move a disk from start_peg to end_peg	
     	addi $s0, $s0, 1		#number of moves
     	sw   $s0, MoveCount
 	
